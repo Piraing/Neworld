@@ -40,24 +40,34 @@ public class TowerBuild : MonoBehaviour
     public void OnEndDrag(BaseEventData data)
     {
         isUnder = false;
-        if (CopyTower==null)
+        if (CopyTower == null)
         {
             return;
         }
         PointerEventData pointerEventData = data as PointerEventData;
-
+        Collider2D[] col = Physics2D.OverlapPointAll(WorldToCamera(pointerEventData.position));
+        foreach (var c in col)
+        {
+            if (c.tag == "Land" && c.transform.childCount == 0)
+            {
                 GameManager.instance.ChangeEnergy(-ReduceEnergy);
                 if (GameManager.instance.isBuild == true)
                 {
+                    CopyTower.transform.parent = c.transform;
+                    CopyTower.transform.position = c.transform.position;
                     CopyTower.GetComponent<Tower>().IsCreate();
+                    break;
                 }
                 else
                 {
                     GameObject.Destroy(CopyTower);
                 }
-            
-            
-        
+            }
+            else
+            {
+                Destroy(CopyTower);
+            }
+        }
 
     }
     //ЪѓБъзјБъ
